@@ -80,8 +80,10 @@ coturn_container_additional_volumes: "{{ coturn_container_additional_volumes_aut
 coturn_container_additional_volumes_auto: []
 coturn_container_additional_volumes_custom: []
 
-# A list of extra arguments to pass to the container
-coturn_container_extra_arguments: []
+# A list of extra arguments to pass to the container (`docker create` command)
+coturn_container_extra_arguments: "{{ coturn_container_extra_arguments_auto + coturn_container_extra_arguments_custom }}"
+coturn_container_extra_arguments_auto: []
+coturn_container_extra_arguments_custom: []
 
 # Controls whether the coturn container exposes its plain STUN port (tcp/3478 in the container) over TCP.
 #
