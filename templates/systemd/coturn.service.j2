@@ -1,4 +1,14 @@
-#jinja2: lstrip_blocks: True
+{#
+SPDX-FileCopyrightText: 2018-2025 Slavi Pantaleev
+SPDX-FileCopyrightText: 2019 Hugues De Keyzer
+SPDX-FileCopyrightText: 2019 Sylvia van Os
+SPDX-FileCopyrightText: 2020 Chris van Dijk
+SPDX-FileCopyrightText: 2021 Dan Arnfield
+SPDX-FileCopyrightText: 2024, 2026 Suguru Hirahara
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
 [Unit]
 Description=coturn ({{ coturn_identifier }})
 {% for service in coturn_systemd_required_services_list %}
@@ -23,9 +33,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --user={{ coturn_uid }}:{{ coturn_gid }} \
       --cap-drop=ALL \
       --cap-add=NET_BIND_SERVICE \
-      --entrypoint=turnserver \
       --read-only \
-      --tmpfs=/var/tmp:rw,noexec,nosuid,size=100m \
       --network={{ coturn_container_network }} \
       {% if coturn_container_stun_plain_host_bind_port_tcp != '' %}
       -p {{ coturn_container_stun_plain_host_bind_port_tcp }}:3478 \
@@ -42,13 +50,16 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% if coturn_container_turn_range_listen_interface is not in [none, 'none'] %}
       -p {{ coturn_container_turn_range_listen_interface }}{{ ':' if coturn_container_turn_range_listen_interface else '' }}{{ coturn_turn_udp_min_port }}-{{ coturn_turn_udp_max_port }}:{{ coturn_turn_udp_min_port }}-{{ coturn_turn_udp_max_port }}/udp \
       {% endif %}
+      --env-file={{ coturn_base_path }}/env \
       --mount type=bind,src={{ coturn_config_path }},dst=/turnserver.conf,ro \
       {% for volume in coturn_container_additional_volumes %}
       --mount type={{ volume.type | default('bind' if '/' in volume.src else 'volume') }},src={{ volume.src }},dst={{ volume.dst }}{{ (',' + volume.options) if volume.options else '' }} \
       {% endfor %}
+      --tmpfs=/var/tmp:rw,noexec,nosuid,size=100m \
       {% for arg in coturn_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}
+      --entrypoint=turnserver \
       {{ coturn_docker_image }} \
       -c /turnserver.conf
 
