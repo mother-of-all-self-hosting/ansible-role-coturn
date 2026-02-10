@@ -54,6 +54,9 @@ coturn_docker_image_force_pull: "{{ coturn_docker_image.endswith(':latest') }}"
 # When running in host-networking mode, you need to adjust the firewall yourself, so that ports are opened.
 coturn_container_network: "{{ coturn_identifier }}"
 
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+# Use this to expose this container to another reverse proxy, which runs in a different container network.
 coturn_container_additional_networks: "{{ coturn_container_additional_networks_auto + coturn_container_additional_networks_custom }}"
 coturn_container_additional_networks_auto: []
 coturn_container_additional_networks_custom: []
