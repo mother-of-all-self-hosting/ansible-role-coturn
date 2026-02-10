@@ -76,7 +76,9 @@ coturn_systemd_required_services_list_custom: []
 # if you wish to mount your own files into the container.
 # Contains definition objects like this: `{"type": "bind", "src": "/outside", "dst": "/inside", "options": "readonly"}.
 # See the `--mount` documentation for the `docker run` command.
-coturn_container_additional_volumes: []
+coturn_container_additional_volumes: "{{ coturn_container_additional_volumes_auto + coturn_container_additional_volumes_custom }}"
+coturn_container_additional_volumes_auto: []
+coturn_container_additional_volumes_custom: []
 
 # A list of extra arguments to pass to the container
 coturn_container_extra_arguments: []
