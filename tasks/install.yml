@@ -116,10 +116,10 @@
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
 
-- name: Ensure coturn.service installed
+- name: Ensure coturn systemd service is present
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/coturn.service.j2"
-    dest: "{{ devture_systemd_docker_base_systemd_path }}/coturn.service"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ coturn_identifier }}.service"
     mode: 0644
 
 # This may be unnecessary when more long-lived certificates are used.
@@ -127,20 +127,20 @@
 # Reloading doesn't hurt anyway, so there's no need to make this more flexible.
 - name: Ensure reloading systemd units installed, if necessary
   ansible.builtin.template:
-    src: "{{ role_path }}/templates/systemd/{{ item }}.j2"
-    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ item }}"
+    src: "{{ role_path }}/templates/systemd/coturn-reload.{{ item }}.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ coturn_identifier }}-reload.{{ item }}"
     mode: 0644
   when: "coturn_tls_enabled | bool"
   with_items:
-    - coturn-reload.service
-    - coturn-reload.timer
+    - service
+    - timer
 
 # A similar task exists in `uninstall.yml`
 - name: Ensure reloading systemd units uninstalled, if unnecessary
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: "{{ coturn_identifier }}-reload.{{ item }}"
     state: absent
   when: "not coturn_tls_enabled | bool"
   with_items:
-    - coturn-reload.service
-    - coturn-reload.timer
+    - service
+    - timer

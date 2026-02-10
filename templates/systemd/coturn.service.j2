@@ -1,6 +1,6 @@
 #jinja2: lstrip_blocks: True
 [Unit]
-Description=Matrix coturn server
+Description=coturn ({{ coturn_identifier }})
 {% for service in coturn_systemd_required_services_list %}
 Requires={{ service }}
 After={{ service }}
@@ -10,8 +10,8 @@ DefaultDependencies=no
 [Service]
 Type=simple
 Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
-ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} coturn 2>/dev/null || true'
-ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm coturn 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ coturn_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ coturn_identifier }} 2>/dev/null || true'
 
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
 			--rm \
@@ -50,21 +50,21 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
 			-c /turnserver.conf
 
 {% for network in coturn_container_additional_networks %}
-ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} coturn
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ coturn_identifier }}
 {% endfor %}
 
-ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach coturn
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ coturn_identifier }}
 
-ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} coturn 2>/dev/null || true'
-ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm coturn 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ coturn_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ coturn_identifier }} 2>/dev/null || true'
 
 # This only reloads certificates (not other configuration).
 # See: https://github.com/coturn/coturn/pull/236
-ExecReload={{ devture_systemd_docker_base_host_command_docker }} exec coturn kill -USR2 1
+ExecReload={{ devture_systemd_docker_base_host_command_docker }} exec {{ coturn_identifier }} kill -USR2 1
 
 Restart=always
 RestartSec=30
-SyslogIdentifier=coturn
+SyslogIdentifier={{ coturn_identifier }}
 
 [Install]
 WantedBy=multi-user.target

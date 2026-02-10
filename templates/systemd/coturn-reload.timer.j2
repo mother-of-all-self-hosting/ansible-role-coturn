@@ -10,7 +10,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 Description=Reloads coturn periodically so that new SSL certificates can kick in
 
 [Timer]
-Unit=coturn-reload.service
+Unit={{ coturn_identifier }}-reload.service
 OnCalendar={{ coturn_reload_schedule }}
 RandomizedDelaySec={{ coturn_reload_schedule_randomized_delay_sec }}
 
