@@ -46,7 +46,7 @@
     - ansible.builtin.set_fact:
         coturn_turn_external_ip_address: "{{ result_coturn_turn_external_ip_address_auto_detection_echoip_response.json.ip }}"
 
-- name: Ensure Matrix coturn path exists
+- name: Ensure coturn paths exist
   ansible.builtin.file:
     path: "{{ item.path }}"
     state: directory
@@ -54,8 +54,17 @@
     owner: "{{ coturn_uid }}"
     group: "{{ coturn_gid }}"
   with_items:
+    - {path: "{{ coturn_base_path }}", when: true}
     - {path: "{{ coturn_docker_src_files_path }}", when: "{{ coturn_container_image_self_build }}"}
   when: "item.when | bool"
+
+- name: Ensure coturn turnserver.conf installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/turnserver.conf.j2"
+    dest: "{{ coturn_config_path }}/turnserver.conf"
+    mode: 0644
+    owner: "{{ coturn_uid }}"
+    group: "{{ coturn_gid }}"
 
 - name: Ensure coturn image is pulled
   community.docker.docker_image:
@@ -91,22 +100,6 @@
           dockerfile: "{{ coturn_container_image_self_build_repo_dockerfile_path }}"
           path: "{{ coturn_docker_src_files_path }}"
           pull: true
-
-- name: Ensure coturn configuration path exists
-  ansible.builtin.file:
-    path: "{{ coturn_base_path }}"
-    state: directory
-    mode: 0750
-    owner: "{{ coturn_uid }}"
-    group: "{{ coturn_gid }}"
-
-- name: Ensure turnserver.conf installed
-  ansible.builtin.template:
-    src: "{{ role_path }}/templates/turnserver.conf.j2"
-    dest: "{{ coturn_config_path }}"
-    mode: 0644
-    owner: "{{ coturn_uid }}"
-    group: "{{ coturn_gid }}"
 
 - name: Ensure coturn network is created in Docker
   when: coturn_container_network not in ['', 'host']
