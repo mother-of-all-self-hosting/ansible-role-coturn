@@ -14,7 +14,8 @@
 
 ---
 
-- when: coturn_turn_external_ip_address_auto_detection_enabled | bool
+- name: Run if the external IP address auto-detection feature is enabled
+  when: coturn_turn_external_ip_address_auto_detection_enabled | bool
   block:
     - name: Fail if enabled, but EchoIP service URL unset
       when: coturn_turn_external_ip_address_auto_detection_echoip_service_url == ''
@@ -43,7 +44,8 @@
       ansible.builtin.fail:
         msg: "Failed contacting EchoIP service API at `{{ coturn_turn_external_ip_address_auto_detection_echoip_service_url }}` (controlled by `coturn_turn_external_ip_address_auto_detection_echoip_service_url`). Full error: {{ result_coturn_turn_external_ip_address_auto_detection_echoip_response }}"
 
-    - ansible.builtin.set_fact:
+    - name: Set fact for coturn TURN external IP address
+      ansible.builtin.set_fact:
         coturn_turn_external_ip_address: "{{ result_coturn_turn_external_ip_address_auto_detection_echoip_response.json.ip }}"
 
 - name: Ensure coturn paths exist
