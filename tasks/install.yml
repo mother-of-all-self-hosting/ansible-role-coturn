@@ -55,7 +55,7 @@
     group: "{{ coturn_gid }}"
   with_items:
     - {path: "{{ coturn_base_path }}", when: true}
-    - {path: "{{ coturn_container_src_files_path }}", when: "{{ coturn_container_image_self_build }}"}
+    - {path: "{{ coturn_container_image_self_build_src_files_path }}", when: "{{ coturn_container_image_self_build }}"}
   when: "item.when | bool"
 
 - name: Ensure coturn turnserver.conf installed
@@ -83,7 +83,7 @@
     - name: Ensure coturn repository is present on self-build
       ansible.builtin.git:
         repo: "{{ coturn_container_image_self_build_repo }}"
-        dest: "{{ coturn_container_src_files_path }}"
+        dest: "{{ coturn_container_image_self_build_src_files_path }}"
         version: "{{ coturn_container_image_self_build_repo_version }}"
         force: "yes"
       become: true
@@ -98,7 +98,7 @@
         force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else coturn_git_pull_results.changed }}"
         build:
           dockerfile: "{{ coturn_container_image_self_build_repo_dockerfile_path }}"
-          path: "{{ coturn_container_src_files_path }}"
+          path: "{{ coturn_container_image_self_build_src_files_path }}"
           pull: true
 
 - name: Ensure coturn network is created in Docker
