@@ -17,7 +17,7 @@
 - name: Run if the external IP address auto-detection feature is enabled
   when: coturn_turn_external_ip_address_auto_detection_enabled | bool
   block:
-    - name: Fail if enabled, but EchoIP service URL unset
+    - name: Fail if enabled, but echoip service URL unset
       when: coturn_turn_external_ip_address_auto_detection_echoip_service_url == ''
       ansible.builtin.fail:
         msg: "To use the external IP address auto-detection feature, you need to set coturn_turn_external_ip_address_auto_detection_echoip_service_url"
@@ -25,7 +25,7 @@
     # Note:
     # `ansible.builtin.uri` does not provide a way to configure whether IPv4 or IPv6 is used.
     # Luckily, the default instance we use does not define AAAA records for now, so it's always IPv4.
-    - name: Fetch IP address information from EchoIP service
+    - name: Fetch IP address information from echoip service
       ansible.builtin.uri:
         url: "{{ coturn_turn_external_ip_address_auto_detection_echoip_service_url }}"
         headers:
@@ -39,10 +39,10 @@
       delay: "{{ coturn_turn_external_ip_address_auto_detection_echoip_service_retries_delay }}"
       until: not result_coturn_turn_external_ip_address_auto_detection_echoip_response.failed
 
-    - name: Fail if EchoIP service failed
+    - name: Fail if echoip service failed
       when: "(result_coturn_turn_external_ip_address_auto_detection_echoip_response.failed or 'json' not in result_coturn_turn_external_ip_address_auto_detection_echoip_response)"
       ansible.builtin.fail:
-        msg: "Failed contacting EchoIP service API at `{{ coturn_turn_external_ip_address_auto_detection_echoip_service_url }}` (controlled by `coturn_turn_external_ip_address_auto_detection_echoip_service_url`). Full error: {{ result_coturn_turn_external_ip_address_auto_detection_echoip_response }}"
+        msg: "Failed contacting echoip service API at `{{ coturn_turn_external_ip_address_auto_detection_echoip_service_url }}` (controlled by `coturn_turn_external_ip_address_auto_detection_echoip_service_url`). Full error: {{ result_coturn_turn_external_ip_address_auto_detection_echoip_response }}"
 
     - name: Set fact for coturn TURN external IP address
       ansible.builtin.set_fact:

@@ -161,21 +161,21 @@ coturn_lt_cred_mech_username: ""
 coturn_lt_cred_mech_password: ""
 
 # The external IP address of the machine where coturn is.
-# If do not define an IP address here or in `coturn_turn_external_ip_addresses`, auto-detection via an EchoIP service will be done.
+# If do not define an IP address here or in `coturn_turn_external_ip_addresses`, auto-detection via an echoip service will be done.
 # See `coturn_turn_external_ip_address_auto_detection_enabled`
 coturn_turn_external_ip_address: ""
 coturn_turn_external_ip_addresses: "{{ [coturn_turn_external_ip_address] if coturn_turn_external_ip_address != '' else [] }}"
 
 # Controls whether external IP address auto-detection should be attempted.
-# We try to do this if there is no external IP address explicitly configured and if an EchoIP service URL is specified.
+# We try to do this if there is no external IP address explicitly configured and if an echoip service URL is specified.
 # See coturn_turn_external_ip_address_auto_detection_echoip_service_url
 coturn_turn_external_ip_address_auto_detection_enabled: "{{ coturn_turn_external_ip_addresses | length == 0 and coturn_turn_external_ip_address_auto_detection_echoip_service_url != '' }}"
 
-# Specifies the address of the EchoIP service (https://github.com/mpolden/echoip) to use for detecting the external IP address.
+# Specifies the address of the echoip service (https://github.com/mpolden/echoip) to use for detecting the external IP address.
 # Example: https://ifconfig.co/json
 coturn_turn_external_ip_address_auto_detection_echoip_service_url: ""
 
-# Controls whether SSL certificates will be validated when contacting the EchoIP service (coturn_turn_external_ip_address_auto_detection_echoip_service_url)
+# Controls whether SSL certificates will be validated when contacting the echoip service (coturn_turn_external_ip_address_auto_detection_echoip_service_url)
 coturn_turn_external_ip_address_auto_detection_echoip_validate_certs: true
 
 coturn_turn_external_ip_address_auto_detection_echoip_service_retries_count: "{{ devture_playbook_help_geturl_retries_count }}"
