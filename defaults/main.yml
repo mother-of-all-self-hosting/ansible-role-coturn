@@ -31,17 +31,17 @@ coturn_gid: ""
 # The hostname at which coturn is served.
 coturn_hostname: ""
 
-coturn_docker_image: "{{ coturn_docker_image_registry_prefix }}coturn/coturn:{{ coturn_version }}-alpine"
-coturn_docker_image_registry_prefix: "{{ 'localhost/' if coturn_container_image_self_build else coturn_docker_image_registry_prefix_upstream }}"
-coturn_docker_image_registry_prefix_upstream: "{{ coturn_docker_image_registry_prefix_upstream_default }}"
-coturn_docker_image_registry_prefix_upstream_default: docker.io/
-coturn_docker_image_force_pull: "{{ coturn_docker_image.endswith(':latest') }}"
+coturn_container_image: "{{ coturn_container_image_registry_prefix }}coturn/coturn:{{ coturn_version }}-alpine"
+coturn_container_image_registry_prefix: "{{ 'localhost/' if coturn_container_image_self_build else coturn_container_image_registry_prefix_upstream }}"
+coturn_container_image_registry_prefix_upstream: "{{ coturn_container_image_registry_prefix_upstream_default }}"
+coturn_container_image_registry_prefix_upstream_default: docker.io/
+coturn_container_image_force_pull: "{{ coturn_container_image.endswith(':latest') }}"
 
 coturn_container_image_self_build: false
 coturn_container_image_self_build_repo: "https://github.com/coturn/coturn"
 coturn_container_image_self_build_repo_version: "docker/{{ coturn_version }}"
 coturn_container_image_self_build_repo_dockerfile_path: "docker/coturn/alpine/Dockerfile"
-coturn_docker_src_files_path: "{{ coturn_base_path }}/docker-src"
+coturn_container_src_files_path: "{{ coturn_base_path }}/docker-src"
 
 # The Docker network that coturn would be put into.
 #
