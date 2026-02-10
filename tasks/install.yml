@@ -61,7 +61,7 @@
 - name: Ensure coturn turnserver.conf installed
   ansible.builtin.template:
     src: "{{ role_path }}/templates/turnserver.conf.j2"
-    dest: "{{ coturn_config_path }}/turnserver.conf"
+    dest: "{{ coturn_config_path }}"
     mode: 0644
     owner: "{{ coturn_uid }}"
     group: "{{ coturn_gid }}"
