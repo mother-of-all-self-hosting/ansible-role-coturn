@@ -39,6 +39,7 @@ coturn_container_image_registry_prefix_upstream_default: docker.io/
 coturn_container_image_force_pull: "{{ coturn_container_image.endswith(':latest') }}"
 
 coturn_container_image_self_build: false
+coturn_container_image_self_build_name: "coturn/coturn:{{ coturn_container_image_self_build_repo_version }}"
 coturn_container_image_self_build_repo: "https://github.com/coturn/coturn"
 coturn_container_image_self_build_repo_version: "docker/{{ coturn_version }}"
 coturn_container_image_self_build_repo_dockerfile_path: "docker/coturn/alpine/Dockerfile"
