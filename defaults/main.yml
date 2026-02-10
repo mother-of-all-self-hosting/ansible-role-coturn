@@ -19,7 +19,7 @@
 coturn_enabled: true
 
 coturn_identifier: coturn
-coturn_base_path: "{{ matrix_base_data_path }}/coturn"
+coturn_base_path: "/{{ coturn_identifier }}"
 coturn_config_path: "{{ coturn_base_path }}/turnserver.conf"
 
 # renovate: datasource=docker depName=coturn/coturn versioning=loose
