@@ -29,6 +29,8 @@
       You need to define a required configuration setting (`{{ item.name }}`).
   when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
   with_items:
+    - {"name": "coturn_uid", when: true}
+    - {"name": "coturn_gid", when: true}
     - {'name': 'coturn_hostname', when: true}
     - {'name': 'coturn_turn_static_auth_secret', when: "{{ coturn_authentication_method == 'auth-secret' }}"}
     - {'name': 'coturn_lt_cred_mech_username', when: "{{ coturn_authentication_method == 'lt-cred-mech' }}"}

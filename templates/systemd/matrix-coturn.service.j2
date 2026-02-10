@@ -17,7 +17,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
 			--rm \
 			--name={{ coturn_identifier }} \
 			--log-driver=none \
-			--user={{ matrix_user_uid }}:{{ matrix_user_gid }} \
+			--user={{ coturn_uid }}:{{ coturn_gid }} \
 			--cap-drop=ALL \
 			--cap-add=NET_BIND_SERVICE \
 			--entrypoint=turnserver \

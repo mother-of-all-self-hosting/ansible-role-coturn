@@ -1,14 +1,14 @@
-# SPDX-FileCopyrightText: 2018 - 2025 Slavi Pantaleev
-# SPDX-FileCopyrightText: 2019 - 2020 MDAD project contributors
+# SPDX-FileCopyrightText: 2018-2025 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2019 Dan Arnfield
+# SPDX-FileCopyrightText: 2019, 2020 MDAD project contributors
 # SPDX-FileCopyrightText: 2020 Béla Becker
 # SPDX-FileCopyrightText: 2020 Chris van Dijk
 # SPDX-FileCopyrightText: 2020 Horvath Gergely
 # SPDX-FileCopyrightText: 2022 Marko Weltzer
 # SPDX-FileCopyrightText: 2022 Nikita Chernyi
 # SPDX-FileCopyrightText: 2022 Sebastian Gumprich
-# SPDX-FileCopyrightText: 2024 - 2025 Suguru Hirahara
 # SPDX-FileCopyrightText: 2024 David Mehren
+# SPDX-FileCopyrightText: 2024-2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -51,8 +51,8 @@
     path: "{{ item.path }}"
     state: directory
     mode: 0750
-    owner: "{{ matrix_user_name }}"
-    group: "{{ matrix_group_name }}"
+    owner: "{{ coturn_uid }}"
+    group: "{{ coturn_gid }}"
   with_items:
     - {path: "{{ coturn_docker_src_files_path }}", when: "{{ coturn_container_image_self_build }}"}
   when: "item.when | bool"
@@ -78,7 +78,7 @@
         version: "{{ coturn_container_image_self_build_repo_version }}"
         force: "yes"
       become: true
-      become_user: "{{ matrix_user_name }}"
+      become_user: "{{ coturn_uid }}"
       register: coturn_git_pull_results
 
     - name: Ensure coturn Docker image is built
@@ -97,16 +97,16 @@
     path: "{{ coturn_base_path }}"
     state: directory
     mode: 0750
-    owner: "{{ matrix_user_name }}"
-    group: "{{ matrix_group_name }}"
+    owner: "{{ coturn_uid }}"
+    group: "{{ coturn_gid }}"
 
 - name: Ensure turnserver.conf installed
   ansible.builtin.template:
     src: "{{ role_path }}/templates/turnserver.conf.j2"
     dest: "{{ coturn_config_path }}"
     mode: 0644
-    owner: "{{ matrix_user_name }}"
-    group: "{{ matrix_group_name }}"
+    owner: "{{ coturn_uid }}"
+    group: "{{ coturn_gid }}"
 
 - name: Ensure coturn network is created in Docker
   when: coturn_container_network not in ['', 'host']

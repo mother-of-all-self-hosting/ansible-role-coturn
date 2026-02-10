@@ -20,6 +20,9 @@ coturn_enabled: true
 
 coturn_identifier: coturn
 
+coturn_uid: ""
+coturn_gid: ""
+
 coturn_hostname: ""
 
 coturn_container_image_self_build: false
