@@ -10,6 +10,11 @@
     path: "{{ devture_systemd_docker_base_systemd_path }}/{{ coturn_identifier }}.service"
   register: coturn_service_stat
 
+- name: Check existence of coturn reload systemd service
+  ansible.builtin.stat:
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ coturn_identifier }}-reload.service"
+  register: coturn_reload_service_stat
+
 - name: Uninstall coturn systemd services and files
   when: coturn_service_stat.stat.exists | bool
   block:
@@ -20,28 +25,30 @@
         enabled: false
         daemon_reload: true
 
-    - name: Ensure coturn reload systemd service is stopped
-      ansible.builtin.service:
-        name: "{{ coturn_identifier }}-reload"
-        state: stopped
-        enabled: false
-        daemon_reload: true
-      failed_when: false
-
     - name: Ensure coturn systemd service does not exist
       ansible.builtin.file:
         path: "{{ devture_systemd_docker_base_systemd_path }}/{{ coturn_identifier }}.service"
         state: absent
 
-    - name: Ensure coturn reload systemd service does not exist
-      ansible.builtin.file:
-        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ coturn_identifier }}-reload.service"
-        state: absent
+    - name: Uninstall coturn reload systemd services and files
+      when: coturn_reload_service_stat.stat.exists | bool
+      block:
+        - name: Ensure coturn reload systemd service is stopped
+          ansible.builtin.service:
+            name: "{{ coturn_identifier }}-reload"
+            state: stopped
+            enabled: false
+            daemon_reload: true
 
-    - name: Ensure coturn timer does not exist
-      ansible.builtin.file:
-        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ coturn_identifier }}-reload.timer"
-        state: absent
+        - name: Ensure coturn reload systemd service does not exist
+          ansible.builtin.file:
+            path: "{{ devture_systemd_docker_base_systemd_path }}/{{ coturn_identifier }}-reload.service"
+            state: absent
+
+        - name: Ensure coturn reload timer does not exist
+          ansible.builtin.file:
+            path: "{{ devture_systemd_docker_base_systemd_path }}/{{ coturn_identifier }}-reload.timer"
+            state: absent
 
     - name: Ensure coturn path does not exist
       ansible.builtin.file:
