@@ -29,6 +29,7 @@
     - {'name': 'coturn_turn_static_auth_secret', when: "{{ coturn_authentication_method == 'auth-secret' }}"}
     - {'name': 'coturn_lt_cred_mech_username', when: "{{ coturn_authentication_method == 'lt-cred-mech' }}"}
     - {'name': 'coturn_lt_cred_mech_password', when: "{{ coturn_authentication_method == 'lt-cred-mech' }}"}
+    - {"name": "coturn_turn_external_ip_address_auto_detection_echoip_service_url", when: "{{ coturn_turn_external_ip_address_auto_detection_enabled }}"}
 
 - name: Fail if coturn_authentication_method is invalid
   ansible.builtin.fail:
