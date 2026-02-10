@@ -135,7 +135,7 @@
     - coturn-reload.service
     - coturn-reload.timer
 
-# A similar task exists in `setup_uninstall.yml`
+# A similar task exists in `uninstall.yml`
 - name: Ensure reloading systemd units uninstalled, if unnecessary
   ansible.builtin.file:
     path: "{{ item }}"
