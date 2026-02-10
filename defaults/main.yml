@@ -31,8 +31,9 @@ coturn_gid: ""
 # The hostname at which coturn is served.
 coturn_hostname: ""
 
-coturn_container_image: "{{ coturn_container_image_registry_prefix }}coturn/coturn:{{ coturn_version }}-alpine"
-coturn_container_image_registry_prefix: "{{ 'localhost/' if coturn_container_image_self_build else coturn_container_image_registry_prefix_upstream }}"
+coturn_container_image: "{{ coturn_container_image_registry_prefix }}coturn/coturn:{{ coturn_container_image_tag }}"
+coturn_container_image_tag: "{{ coturn_version }}-alpine"
+coturn_container_image_registry_prefix: "{{ coturn_container_image_registry_prefix_upstream }}"
 coturn_container_image_registry_prefix_upstream: "{{ coturn_container_image_registry_prefix_upstream_default }}"
 coturn_container_image_registry_prefix_upstream_default: docker.io/
 coturn_container_image_force_pull: "{{ coturn_container_image.endswith(':latest') }}"
