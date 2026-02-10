@@ -47,7 +47,7 @@ coturn_docker_image_force_pull: "{{ coturn_docker_image.endswith(':latest') }}"
 # Regardless of the networking mode, we apply a deny list which via `coturn_denied_peer_ips`,
 # which hopefully prevents access to such private network ranges.
 # When running in host-networking mode, you need to adjust the firewall yourself, so that ports are opened.
-coturn_container_network: "matrix-coturn"
+coturn_container_network: "coturn"
 
 coturn_container_additional_networks: "{{ coturn_container_additional_networks_auto + coturn_container_additional_networks_custom }}"
 coturn_container_additional_networks_auto: []
@@ -57,7 +57,7 @@ coturn_base_path: "{{ matrix_base_data_path }}/coturn"
 coturn_docker_src_files_path: "{{ coturn_base_path }}/docker-src"
 coturn_config_path: "{{ coturn_base_path }}/turnserver.conf"
 
-# List of systemd services that matrix-coturn.service depends on
+# List of systemd services that coturn.service depends on
 coturn_systemd_required_services_list: "{{ coturn_systemd_required_services_list_default + coturn_systemd_required_services_list_auto + coturn_systemd_required_services_list_custom }}"
 coturn_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
 coturn_systemd_required_services_list_auto: []

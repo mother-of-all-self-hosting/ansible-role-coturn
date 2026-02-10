@@ -116,10 +116,10 @@
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
 
-- name: Ensure matrix-coturn.service installed
+- name: Ensure coturn.service installed
   ansible.builtin.template:
-    src: "{{ role_path }}/templates/systemd/matrix-coturn.service.j2"
-    dest: "{{ devture_systemd_docker_base_systemd_path }}/matrix-coturn.service"
+    src: "{{ role_path }}/templates/systemd/coturn.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/coturn.service"
     mode: 0644
 
 # This may be unnecessary when more long-lived certificates are used.
@@ -132,8 +132,8 @@
     mode: 0644
   when: "coturn_tls_enabled | bool"
   with_items:
-    - matrix-coturn-reload.service
-    - matrix-coturn-reload.timer
+    - coturn-reload.service
+    - coturn-reload.timer
 
 # A similar task exists in `setup_uninstall.yml`
 - name: Ensure reloading systemd units uninstalled, if unnecessary
@@ -142,5 +142,5 @@
     state: absent
   when: "not coturn_tls_enabled | bool"
   with_items:
-    - matrix-coturn-reload.service
-    - matrix-coturn-reload.timer
+    - coturn-reload.service
+    - coturn-reload.timer
