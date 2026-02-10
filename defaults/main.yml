@@ -117,6 +117,9 @@ coturn_container_additional_volumes: "{{ coturn_container_additional_volumes_aut
 coturn_container_additional_volumes_auto: []
 coturn_container_additional_volumes_custom: []
 
+# Specify the size of the container's tmpfs volume
+coturn_container_tmpfs_tmp_size: 100m
+
 # A list of extra arguments to pass to the container (`docker create` command)
 coturn_container_extra_arguments: "{{ coturn_container_extra_arguments_auto + coturn_container_extra_arguments_custom }}"
 coturn_container_extra_arguments_auto: []
