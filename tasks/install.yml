@@ -58,6 +58,16 @@
     - {path: "{{ coturn_container_image_self_build_src_files_path }}", when: "{{ coturn_container_image_self_build }}"}
   when: "item.when | bool"
 
+- name: Ensure coturn support file installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ coturn_base_path }}/{{ item }}"
+    mode: "0640"
+    owner: "{{ coturn_uid }}"
+    group: "{{ coturn_gid }}"
+  with_items:
+    - env
+
 - name: Ensure coturn turnserver.conf installed
   ansible.builtin.template:
     src: "{{ role_path }}/templates/turnserver.conf.j2"

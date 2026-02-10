@@ -256,3 +256,9 @@ coturn_tls_v1_1_enabled: false
 coturn_reload_schedule: "*-*-* 06:30:00"
 # the delay with which the systemd timer may run in relation to the `coturn_reload_schedule` schedule
 coturn_reload_schedule_randomized_delay_sec: 1h
+
+# Specify the timezone
+coturn_environment_variables_tz: UTC
+
+# Additional environment variables.
+coturn_environment_variables_additional_variables: ""
