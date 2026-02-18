@@ -128,7 +128,7 @@
           args:
       register: coturn_container_image_build_result
 
-- name: Ensure coturn network is created in Docker
+- name: Ensure coturn container network is created
   when: coturn_container_network not in ['', 'host']
   block:
     - name: Ensure coturn container network is created via community.docker.docker_network
