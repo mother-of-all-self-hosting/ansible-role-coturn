@@ -126,6 +126,7 @@
           path: "{{ coturn_container_image_self_build_src_files_path }}"
           pull: true
           args:
+      register: coturn_container_image_build_result
 
 - name: Ensure coturn network is created in Docker
   when: coturn_container_network not in ['', 'host']
