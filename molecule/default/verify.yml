@@ -1,0 +1,35 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify coturn systemd service
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Wait for coturn service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: coturn.service
+      register: coturn_service
+      until: coturn_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert coturn service is active
+      ansible.builtin.assert:
+        that: coturn_service.status.ActiveState == 'active'
+        fail_msg: "coturn.service not active ({{ coturn_service.status.ActiveState }})"
+        success_msg: "coturn.service is active"
+
+    - name: Retrieve coturn service log for debugging
+      when: coturn_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu coturn.service
+      changed_when: false
+
+    - name: Show coturn systemd service status summary
+      ansible.builtin.debug:
+        msg:
+          - "coturn systemd: {{ coturn_service.status.ActiveState }}"
