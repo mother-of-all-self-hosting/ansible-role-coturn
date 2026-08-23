@@ -47,7 +47,7 @@ Currently there is one testing scenario available.
 
 ### `default`
 
-Tests a standard coturn installation.
+Tests a standard coturn installation. Beyond checking that the systemd service comes up, it talks to the running server the way a client would: a hand-built STUN Binding request over both UDP and TCP (expecting a success response carrying a `XOR-MAPPED-ADDRESS`), and a TURN `Allocate` request carrying no credentials (expecting the `401` challenge with the configured realm and a nonce). It also asserts that the running `turnserver` reports the version that the role installs.
 
 ## Running
 
