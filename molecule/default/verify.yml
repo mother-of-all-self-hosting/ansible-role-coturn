@@ -253,7 +253,7 @@
       ansible.builtin.debug:
         msg:
           - "coturn systemd: {{ coturn_service.status.ActiveState }}"
-          - "STUN over UDP: {{ coturn_stun_udp.stdout }}"
-          - "STUN over TCP: {{ coturn_stun_tcp.stdout }}"
-          - "TURN Allocate without credentials: {{ coturn_turn_allocate.stdout }}"
-          - "Version: {{ coturn_version_reported.stdout | trim }}"
+          - "coturn STUN over UDP: {{ coturn_stun_udp.stdout }}"
+          - "coturn STUN over TCP: {{ coturn_stun_tcp.stdout }}"
+          - "coturn TURN Allocate without credentials: {{ coturn_turn_allocate.stdout }}"
+          - "coturn Version: {{ coturn_version_reported.stdout | trim }}"
