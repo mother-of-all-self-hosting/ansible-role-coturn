@@ -244,10 +244,8 @@
     - name: Assert the running coturn is the version this role installs
       ansible.builtin.assert:
         that: (coturn_version_reported.stdout | trim).startswith(coturn_defaults.coturn_version | string)
-        fail_msg: >-
-          coturn reports version {{ coturn_version_reported.stdout | trim | default('none') }},
-          but the role asks for {{ coturn_defaults.coturn_version }}
-        success_msg: "coturn reports version {{ coturn_version_reported.stdout | trim }}"
+        fail_msg: "coturn reports {{ coturn_version_reported.stdout | trim | default('none') }}, expected {{ coturn_defaults.coturn_version }}"
+        success_msg: "coturn reports {{ coturn_version_reported.stdout | trim }}"
 
     - name: Show coturn verification summary
       ansible.builtin.debug:
