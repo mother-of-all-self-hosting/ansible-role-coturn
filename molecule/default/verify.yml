@@ -247,11 +247,11 @@
         fail_msg: "coturn reports {{ coturn_version_reported.stdout | trim | default('none') }}, expected {{ coturn_defaults.coturn_version }}"
         success_msg: "coturn reports {{ coturn_version_reported.stdout | trim }}"
 
-    - name: Show coturn verification summary
+    - name: Show the coturn verification summary
       ansible.builtin.debug:
         msg:
           - "coturn systemd: {{ coturn_service.status.ActiveState }}"
+          - "coturn version: {{ coturn_version_reported.stdout | trim }}"
           - "coturn STUN over UDP: {{ coturn_stun_udp.stdout }}"
           - "coturn STUN over TCP: {{ coturn_stun_tcp.stdout }}"
           - "coturn TURN Allocate without credentials: {{ coturn_turn_allocate.stdout }}"
-          - "coturn Version: {{ coturn_version_reported.stdout | trim }}"
