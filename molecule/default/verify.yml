@@ -241,7 +241,7 @@
       register: coturn_version_reported
       changed_when: false
 
-    - name: Assert the running coturn is the version the role asks for
+    - name: Assert the running coturn is the version this role installs
       ansible.builtin.assert:
         that: (coturn_version_reported.stdout | trim).startswith(coturn_defaults.coturn_version | string)
         fail_msg: >-
