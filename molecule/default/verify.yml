@@ -38,6 +38,25 @@
         cmd: journalctl -xeu coturn.service
       changed_when: false
 
+    # Tying the running version to `coturn_version` is what makes this scenario
+    # a real test of the version that Renovate bumps: a bump that produces an
+    # unusable image cannot pass here.
+    #
+    # The version has to be asked of the binary, because turnserver.conf enables
+    # `prod`, which is what stops coturn from advertising its version in the
+    # SOFTWARE attribute of the STUN responses probed above.
+    - name: Query the version of the running coturn
+      ansible.builtin.command:
+        cmd: "docker exec {{ coturn_defaults.coturn_identifier }} turnserver --version"
+      register: coturn_version_reported
+      changed_when: false
+
+    - name: Assert the running coturn is the version this role installs
+      ansible.builtin.assert:
+        that: (coturn_version_reported.stdout | trim).startswith(coturn_defaults.coturn_version | string)
+        fail_msg: "coturn reports {{ coturn_version_reported.stdout | trim | default('none') }}, expected {{ coturn_defaults.coturn_version }}"
+        success_msg: "coturn reports {{ coturn_version_reported.stdout | trim }}"
+
     # A systemd unit reaching "active" only means that `docker start` has not
     # exited yet. Answering a STUN Binding request is the cheapest thing the
     # TURN/STUN server itself can do, so it is the first probe here that proves
@@ -221,25 +240,6 @@
           coturn did not challenge an unauthenticated TURN Allocate as configured
           ({{ coturn_turn_allocate.stdout | default('no output') }})
         success_msg: "coturn challenges an unauthenticated TURN Allocate ({{ coturn_turn_allocate.stdout }})"
-
-    # Tying the running version to `coturn_version` is what makes this scenario
-    # a real test of the version that Renovate bumps: a bump that produces an
-    # unusable image cannot pass here.
-    #
-    # The version has to be asked of the binary, because turnserver.conf enables
-    # `prod`, which is what stops coturn from advertising its version in the
-    # SOFTWARE attribute of the STUN responses probed above.
-    - name: Query the version of the running coturn
-      ansible.builtin.command:
-        cmd: "docker exec {{ coturn_defaults.coturn_identifier }} turnserver --version"
-      register: coturn_version_reported
-      changed_when: false
-
-    - name: Assert the running coturn is the version this role installs
-      ansible.builtin.assert:
-        that: (coturn_version_reported.stdout | trim).startswith(coturn_defaults.coturn_version | string)
-        fail_msg: "coturn reports {{ coturn_version_reported.stdout | trim | default('none') }}, expected {{ coturn_defaults.coturn_version }}"
-        success_msg: "coturn reports {{ coturn_version_reported.stdout | trim }}"
 
     - name: Show the coturn verification summary
       ansible.builtin.debug:
