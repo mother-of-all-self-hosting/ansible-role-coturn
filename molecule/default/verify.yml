@@ -229,7 +229,7 @@
     # The version has to be asked of the binary, because turnserver.conf enables
     # `prod`, which is what stops coturn from advertising its version in the
     # SOFTWARE attribute of the STUN responses probed above.
-    - name: Query the version reported by the running coturn
+    - name: Query the version of the running coturn
       ansible.builtin.command:
         cmd: "docker exec {{ coturn_defaults.coturn_identifier }} turnserver --version"
       register: coturn_version_reported
