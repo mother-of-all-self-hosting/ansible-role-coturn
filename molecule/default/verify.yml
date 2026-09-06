@@ -38,10 +38,6 @@
         cmd: journalctl -xeu coturn.service
       changed_when: false
 
-    # Tying the running version to `coturn_version` is what makes this scenario
-    # a real test of the version that Renovate bumps: a bump that produces an
-    # unusable image cannot pass here.
-    #
     # The version has to be asked of the binary, because turnserver.conf enables
     # `prod`, which is what stops coturn from advertising its version in the
     # SOFTWARE attribute of the STUN responses probed above.
@@ -57,8 +53,7 @@
         fail_msg: "coturn reports {{ coturn_version_reported.stdout | trim | default('none') }}, expected {{ coturn_defaults.coturn_version }}"
         success_msg: "coturn reports {{ coturn_version_reported.stdout | trim }}"
 
-    # A systemd unit reaching "active" only means that `docker start` has not
-    # exited yet. Answering a STUN Binding request is the cheapest thing the
+    # Answering a STUN Binding request is the cheapest thing the
     # TURN/STUN server itself can do, so it is the first probe here that proves
     # a serving coturn rather than a merely running container.
     #
