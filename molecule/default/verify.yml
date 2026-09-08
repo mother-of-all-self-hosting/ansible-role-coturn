@@ -41,7 +41,7 @@
     - name: Retrieve the coturn systemd service log for debugging
       when: coturn_debug_service_enabled | bool
       ansible.builtin.command:
-        cmd: journalctl -xeu coturn.service
+        cmd: journalctl --no-pager --output=cat --unit=coturn.service
       changed_when: false
 
     # The version has to be asked of the binary, because turnserver.conf enables
