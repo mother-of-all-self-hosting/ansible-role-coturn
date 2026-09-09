@@ -10,6 +10,8 @@
   become: true
   gather_facts: false
   tasks:
+    - name: Verify that coturn works
+      block:
     # The role is not included in this playbook, so its defaults are not in
     # scope. Reading defaults/main.yml directly ties the version assertion
     # below.
@@ -250,3 +252,19 @@
           - "coturn STUN over UDP: {{ coturn_stun_udp.stdout }}"
           - "coturn STUN over TCP: {{ coturn_stun_tcp.stdout }}"
           - "coturn TURN Allocate without credentials: {{ coturn_turn_allocate.stdout }}"
+
+      rescue:
+        # Whatever went wrong, the reason is almost always in the systemd service log.
+        - name: Retrieve the coturn systemd service log
+          ansible.builtin.command:
+            cmd: journalctl --no-pager --output=cat --unit=coturn.service
+          register: coturn_service_log
+          changed_when: false
+
+        - name: Show the coturn systemd service log
+          ansible.builtin.debug:
+            var: coturn_service_log.stdout_lines
+
+        - name: Fail because verification did not pass
+          ansible.builtin.fail:
+            msg: "coturn verification failed. The systemd service log is printed above."
