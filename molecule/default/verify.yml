@@ -9,6 +9,11 @@
   hosts: all
   become: true
   gather_facts: false
+
+  vars:
+    coturn_verify_units:
+      - coturn.service
+
   tasks:
     - name: Verify that coturn works
       block:
@@ -20,13 +25,14 @@
             file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
             name: coturn_defaults
 
-        - name: Wait for the coturn systemd service to become active (up to 180s)
+        - name: Wait for the coturn systemd services to become active (up to 180s each)
           ansible.builtin.systemd_service:
-            name: coturn.service
-          register: coturn_service
-          until: coturn_service.status.ActiveState == 'active'
+            name: "{{ item }}"
+          register: coturn_services
+          until: coturn_services.status.ActiveState == 'active'
           retries: 36
           delay: 5
+          loop: "{{ coturn_verify_units }}"
           # So that giving up is reported by the assertion below rather than as a
           # wall of systemd unit properties.
           failed_when: false
@@ -34,17 +40,20 @@
         # `Restart=always` in the systemd unit means that even a container which crashes
         # and gets restarted reads as active here, so this is a precondition rather than
         # a result.
-        - name: Assert the coturn systemd service is active
+        - name: Assert the coturn systemd services are active
           ansible.builtin.assert:
-            that: coturn_service.status.ActiveState == 'active'
-            fail_msg: "coturn.service is not active ({{ coturn_service.status.ActiveState }})"
-            success_msg: "coturn.service is active"
+            that: coturn_services.results | map(attribute='status.ActiveState') | unique | list == ['active']
+            fail_msg: >-
+              Not every service is active:
+              {{ dict(coturn_verify_units | zip(coturn_services.results | map(attribute='status.ActiveState'))) }}
+            success_msg: "Every systemd service is active"
 
-        - name: Retrieve the coturn systemd service log for debugging
+        - name: Retrieve the coturn systemd services log for debugging
           when: coturn_debug_service_enabled | bool
           ansible.builtin.command:
-            cmd: journalctl --no-pager --output=cat --unit=coturn.service
+            cmd: "journalctl --no-pager --output=cat --unit={{ item }}"
           changed_when: false
+          loop: "{{ coturn_verify_units }}"
 
         # The version has to be asked of the binary, because turnserver.conf enables
         # `prod`, which is what stops coturn from advertising its version in the
@@ -247,7 +256,7 @@
         - name: Show the coturn verification summary
           ansible.builtin.debug:
             msg:
-              - "coturn systemd: {{ coturn_service.status.ActiveState }}"
+              - "coturn systemd: {% for unit, state in coturn_verify_units | zip(coturn_services.results | map(attribute='status.ActiveState')) %}{{ unit }} ({{ state }}){% if not loop.last %}, {% endif %}{% endfor %}"
               - "coturn version: {{ coturn_version_reported.stdout | trim }}"
               - "coturn STUN over UDP: {{ coturn_stun_udp.stdout }}"
               - "coturn STUN over TCP: {{ coturn_stun_tcp.stdout }}"
